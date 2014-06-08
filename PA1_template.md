@@ -53,18 +53,27 @@ head(step_agg)
 and as requested display this as a histogram:
 
 ```r
-barplot(step_agg, names = format(as.Date(names(step_agg)), "%d"), ylab = "Total steps", 
-    xlab = "Oct-Nov 2012", cex.names = 0.5)
+hist(step_agg, xlab = "Daily steps", main = "Histogram of total daily steps", 
+    ylim = c(0, 30))
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
-The data in question covers a two month period, October and November 2012. The histogram shows the total number of steps taken each day. The x-axis is labelled with the day of the month in question, starting from 01 October and running through to 30 November.
+It is also informative to view the data as a bar plot:
+
+```r
+barplot(step_agg, names = format(as.Date(names(step_agg)), "%d"), ylab = "Total steps", 
+    xlab = "Oct-Nov 2012", cex.names = 0.5)
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
+The data in question covers a two month period, October and November 2012. The bar plot shows the total number of steps taken each day. The x-axis is labelled with the day of the month in question, starting from 01 October and running through to 30 November.
 
 We note that there are some days without data - these correspond to missing step data removed in the pre-processing.
 
 We can calculate the mean and median total number of steps via
-Mean:
+mean:
 
 ```r
 mean(step_agg, na.rm = TRUE)
@@ -84,7 +93,7 @@ median(step_agg, na.rm = TRUE)
 ## [1] 10765
 ```
 
-
+These values are consistent with the distribution of data in the histogram.
 
 ## What is the average daily activity pattern?
 We now look at how number of steps vary across days by aggregating the data each intervals. More precisely, we calculate the average number of steps in each time interval, and plot them:
@@ -94,7 +103,7 @@ interval_agg <- tapply(steps$steps, steps$interval, mean)
 plot(interval_agg, type = "l", xlab = "Interval number", ylab = "Average steps")
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
 
 Each interval corresponds to a five minute time period. Hence there are 12*24=288 intervals in each day. These correspond to the x-axis labels. We can see the graph peaks at about interval 100 and we can find precise information about this value, as requested via:
 
@@ -163,7 +172,7 @@ head(merged_data)
 ## 6        0 0.000 2012-11-15      1.717
 ```
 
-We can then repeat the previous analysis, producing a histogram of the total number of steps taken each day:
+We can then repeat the previous analysis, producing a bar graph of the total number of steps taken each day:
 
 ```r
 merged_step_agg <- tapply(merged_data$steps, merged_data$date, sum)
@@ -171,7 +180,7 @@ barplot(merged_step_agg, names = format(as.Date(names(merged_step_agg)), "%d"),
     ylab = "Total steps", xlab = "Oct-Nov 2012", cex.names = 0.5)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
 
 and computing the mean and median number of steps taken each day.
 
@@ -191,17 +200,19 @@ median(merged_step_agg)
 ## [1] 10766
 ```
 
-We note that the histogram now shows data for days that originally had missing data. The mean value have remained the same. This is because the missing data actually corresponded to whole days so replacing this data with the average number of steps in each interval just contributed extra days where the total number of steps were identical to the previously calculated average, hence leaving it unchanged.
-
-We can see a difference, for example, if we look at the total number of steps for the two cases.
+We note that the bar plot now shows data for days that originally had missing data. The mean value have remained the same. This is because the missing data actually corresponded to whole days so replacing this data with the average number of steps in each interval just contributed extra days where the total number of steps were identical to the previously calculated average, hence leaving it unchanged.
+Similarly we can look at the histogram:
 
 ```r
-sum(merged_step_agg)
+hist(merged_step_agg, xlab = "Daily steps", main = "Histogram of total daily steps", 
+    ylim = c(0, 35))
 ```
 
-```
-## [1] 656738
-```
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+
+and see that these days have been added into the middle bin which contains the mean value.
+
+We can also clearly see the impact made by imputing missing data, for example, if we look at the total number of steps for the two cases.
 
 ```r
 sum(step_agg, na.rm = TRUE)
@@ -209,6 +220,14 @@ sum(step_agg, na.rm = TRUE)
 
 ```
 ## [1] 570608
+```
+
+```r
+sum(merged_step_agg)
+```
+
+```
+## [1] 656738
 ```
 
 
@@ -269,7 +288,7 @@ mtext("Interval", side = 1, cex = 0.7, outer = TRUE)
 mtext("Average steps", side = 2, cex = 0.7, outer = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
 
 Again, the results are not unexpected. Weekdays show a peak around "rush hour" then less activity as presumably people are sitting working, with smaller peaks around lunchtime, school finish time and the end of the working day; weekends show bursts of activity throughout daytime hours.
 
